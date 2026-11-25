@@ -1,0 +1,6 @@
+ride,samples,payload_kb,1_json_parse_and_validation_ms,2_to_dataframe_ms,3_feature_extraction_ms,4_model_default_threads_ms,4_model_1_thread_ms,4_model_onnx_ms
+crash_1,2559,131,0.54,1.41,1.1,26.91,11.69,0.01
+crash_2,6198,322,1.23,3.26,1.49,26.88,12.01,0.01
+safe_1,6524,334,1.41,3.52,1.68,26.83,11.83,0.01
+safe_2,6324,325,1.27,3.39,1.56,26.89,11.89,0.01
+MEAN,5401.25,278.0,1.11,2.89,1.46,26.88,11.85,0.01

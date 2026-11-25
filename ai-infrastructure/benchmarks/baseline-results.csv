@@ -1,0 +1,2 @@
+runtime,model_file_mb,batch1_mean_ms,batch1_p50_ms,batch1_p95_ms,batch1_p99_ms,batch1_throughput_rps,batch700_mean_ms,batch700_throughput_rides_s,process_rss_mb,rss_added_by_runtime_mb,test_roc_auc,max_abs_proba_diff_vs_baseline,decisions_changed_vs_baseline
+sklearn_default,9.76,27.327,27.294,28.941,29.783,36.6,36.22,19326,264.5,81.2,0.9905,0.0,0

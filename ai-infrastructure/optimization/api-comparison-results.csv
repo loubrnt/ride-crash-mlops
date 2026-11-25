@@ -1,0 +1,7 @@
+configuration,step,concurrency,requests,mean_payload_kb,mean_ms,p50_ms,p95_ms,p99_ms,throughput_rps
+default,api_predict_http,1,200,278,39.953,38.892,44.43,56.076,25.0
+default,api_predict_http,4,400,278,135.361,125.422,207.628,299.523,29.5
+default,api_predict_http,16,800,278,504.416,500.405,615.2,666.129,31.6
+inference_threads_1,api_predict_http,1,200,278,36.966,36.927,40.307,41.585,27.0
+inference_threads_1,api_predict_http,4,400,278,120.373,116.363,155.25,240.733,33.2
+inference_threads_1,api_predict_http,16,800,278,524.088,510.675,664.587,816.605,30.4

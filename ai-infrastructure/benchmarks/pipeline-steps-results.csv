@@ -1,0 +1,6 @@
+step,mean_samples_per_ride,mean_ms,p50_ms,p95_ms,p99_ms,rows,features,mean_s,min_s,max_s,rss_added_mb,concurrency,requests,mean_payload_kb,throughput_rps
+feature_extraction_per_ride,5401.0,1.514,1.601,1.792,1.827,,,,,,,,,,
+training_fit,,,,,,2790.0,62.0,0.38,0.36,0.4,16.9,,,,
+api_predict_http,,40.4,39.419,44.304,72.321,,,,,,,1.0,200.0,278.0,24.7
+api_predict_http,,123.93,120.987,174.256,202.949,,,,,,,4.0,400.0,278.0,32.2
+api_predict_http,,509.198,502.887,620.142,670.119,,,,,,,16.0,800.0,278.0,31.3

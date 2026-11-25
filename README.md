@@ -193,6 +193,11 @@ Tests run on a small synthetic dataset, so they need neither the raw file nor a 
 └── .github/workflows/       CI and CD
 ```
 
+## AI infrastructure
+
+Sizing, benchmarks, optimisation (ONNX Runtime, inference threads), distributed-training decision,
+scaling and cost plan: see [`ai-infrastructure/`](ai-infrastructure/README.md).
+
 ## Limits and next steps
 
 - The model scores a whole ride after it ends; detecting a crash live would need sliding windows.

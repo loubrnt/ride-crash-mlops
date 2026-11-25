@@ -1,0 +1,5 @@
+runtime,model_file_mb,batch1_mean_ms,batch1_p50_ms,batch1_p95_ms,batch1_p99_ms,batch1_throughput_rps,batch700_mean_ms,batch700_throughput_rides_s,process_rss_mb,rss_added_by_runtime_mb,test_roc_auc,max_abs_proba_diff_vs_baseline,decisions_changed_vs_baseline
+sklearn_default,9.76,27.327,27.294,28.941,29.783,36.6,36.22,19326,264.5,81.2,0.9905,0.0,0
+sklearn_1thread,9.76,11.831,11.65,12.619,13.621,84.5,20.12,34798,306.7,123.9,0.9905,0.0,0
+onnx_default,1.42,0.01,0.009,0.012,0.029,100361.0,1.75,400610,231.2,48.2,0.9905,0.0,0
+onnx_1thread,1.42,0.011,0.011,0.012,0.014,87398.9,6.83,102561,224.2,42.4,0.9905,1e-06,0

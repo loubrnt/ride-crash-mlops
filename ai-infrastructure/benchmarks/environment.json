@@ -1,0 +1,12 @@
+{
+  "cpu": "Apple M3 Pro",
+  "logical_cores": 11,
+  "ram_gb": 19.3,
+  "gpu": "none used",
+  "os": "macOS-15.7.4-arm64-arm-64bit",
+  "python": "3.12.2",
+  "scikit_learn": "1.9.1",
+  "onnxruntime": "1.32.0",
+  "warmup_calls": 50,
+  "repetitions_batch1": 1000
+}
