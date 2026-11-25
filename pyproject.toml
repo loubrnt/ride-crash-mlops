@@ -27,6 +27,11 @@ app = [
     "requests>=2.32",
     "streamlit>=1.38",
 ]
+infra = [
+    "onnxruntime>=1.19",
+    "psutil>=6.0",
+    "skl2onnx>=1.17",
+]
 
 [build-system]
 requires = ["setuptools>=68"]

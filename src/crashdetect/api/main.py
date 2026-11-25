@@ -20,6 +20,11 @@ state: dict = {}
 
 def load_model(model_uri: str) -> None:
     state["model"] = mlflow.sklearn.load_model(model_uri)
+    # One request = one ride: a thread pool per prediction costs more than it saves
+    # (measured in ai-infrastructure/). INFERENCE_THREADS=1 turns it off.
+    threads = os.getenv("INFERENCE_THREADS")
+    if threads and hasattr(state["model"][-1], "n_jobs"):
+        state["model"][-1].set_params(n_jobs=int(threads))
     meta_path = Path(model_uri) / "model_meta.json"
     state["meta"] = (
         json.loads(meta_path.read_text())

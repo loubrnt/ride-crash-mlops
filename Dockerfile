@@ -27,8 +27,10 @@ COPY model ./model
 RUN useradd --create-home appuser
 USER appuser
 
+# INFERENCE_THREADS=1: measured in ai-infrastructure/ (one ride per request, no thread pool needed)
 ENV PATH="/app/.venv/bin:$PATH" \
-    MODEL_URI=/app/model
+    MODEL_URI=/app/model \
+    INFERENCE_THREADS=1
 EXPOSE 8000
 
 HEALTHCHECK --interval=15s --timeout=3s --start-period=30s \

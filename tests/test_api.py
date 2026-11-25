@@ -59,3 +59,11 @@ def test_predict_rejects_unequal_lengths(client):
 def test_predict_rejects_too_short_ride(client):
     body = {axis: [0.0] * 3 for axis in ("ax", "ay", "az", "rx", "ry", "rz")}
     assert client.post("/predict", json=body).status_code == 422
+
+
+def test_inference_threads_setting(project, monkeypatch):
+    from crashdetect.api import main
+
+    monkeypatch.setenv("INFERENCE_THREADS", "1")
+    main.load_model(str(project["root"] / "model"))
+    assert main.state["model"][-1].n_jobs == 1
