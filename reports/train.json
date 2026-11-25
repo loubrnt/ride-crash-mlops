@@ -1,0 +1,10 @@
+{
+  "run_id": "dfb89523720b4d898ab113cdfc03603e",
+  "model_version": "2",
+  "model": "random_forest",
+  "cv_roc_auc": 0.9915,
+  "cv_avg_precision": 0.9615,
+  "cv_precision": 0.883,
+  "cv_recall": 0.9606,
+  "cv_f1": 0.9202
+}

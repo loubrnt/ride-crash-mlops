@@ -1,0 +1,74 @@
+# Reproducible pipeline (DAG):  dvc repro   /   dvc dag
+# DVC only reruns the stages whose dependencies or parameters changed.
+#
+#   features -> split -> train -> evaluate -> export
+#                  \-> samples
+#
+# The raw file data/raw/SRV3490.parquet is not in git (268 MB): see README.
+stages:
+  features:
+    cmd: python -m crashdetect.data features
+    deps:
+      - src/crashdetect/data.py
+      - src/crashdetect/features.py
+      - data/raw/SRV3490.parquet
+    outs:
+      - data/processed/features.csv:
+          cache: false          # small, committed to git so CI can train without the raw file
+
+  split:
+    cmd: python -m crashdetect.data split
+    deps:
+      - src/crashdetect/data.py
+      - data/processed/features.csv
+    params:
+      - data.test_share
+      - data.random_state
+    outs:
+      - data/processed/train.csv
+      - data/processed/test.csv
+
+  samples:
+    cmd: python -m crashdetect.data samples
+    deps:
+      - src/crashdetect/data.py
+      - data/raw/SRV3490.parquet
+      - data/processed/test.csv
+    params:
+      - data.n_samples
+    outs:
+      - samples:
+          cache: false          # example rides for the web app, committed to git
+
+  train:
+    cmd: python -m crashdetect.train
+    deps:
+      - src/crashdetect/train.py
+      - src/crashdetect/metrics.py
+      - data/processed/train.csv
+    params:
+      - train
+    metrics:
+      - reports/train.json:
+          cache: false
+
+  evaluate:
+    cmd: python -m crashdetect.evaluate
+    deps:
+      - src/crashdetect/evaluate.py
+      - reports/train.json
+      - data/processed/test.csv
+    params:
+      - gate
+    metrics:
+      - reports/eval.json:
+          cache: false
+
+  export:
+    cmd: python -m crashdetect.export_model
+    deps:
+      - src/crashdetect/export_model.py
+      - reports/eval.json
+    outs:
+      - model:
+          cache: false

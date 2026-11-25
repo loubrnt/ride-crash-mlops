@@ -1,0 +1,140 @@
+schema: '2.0'
+stages:
+  features:
+    cmd: python -m crashdetect.data features
+    deps:
+    - path: data/raw/SRV3490.parquet
+      hash: md5
+      md5: dc3537544c57a6500203db714e0e857a
+      size: 268229940
+    - path: src/crashdetect/data.py
+      hash: md5
+      md5: 0ecfc96e70fa21b8905819c5bd355c05
+      size: 4085
+    - path: src/crashdetect/features.py
+      hash: md5
+      md5: b755dac915562c97134f77c49a71d29e
+      size: 2033
+    outs:
+    - path: data/processed/features.csv
+      hash: md5
+      md5: 2b3ea883030d8652fc9c061c71a8c58d
+      size: 2281401
+  split:
+    cmd: python -m crashdetect.data split
+    deps:
+    - path: data/processed/features.csv
+      hash: md5
+      md5: 2b3ea883030d8652fc9c061c71a8c58d
+      size: 2281401
+    - path: src/crashdetect/data.py
+      hash: md5
+      md5: 0ecfc96e70fa21b8905819c5bd355c05
+      size: 4085
+    params:
+      params.yaml:
+        data.random_state: 42
+        data.test_share: 0.2
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: c0f66c1d737da12c9ceea742ef9c6998
+      size: 460564
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 316e3eadc0ab47575c8b63f3b060c63e
+      size: 1835205
+  samples:
+    cmd: python -m crashdetect.data samples
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: c0f66c1d737da12c9ceea742ef9c6998
+      size: 460564
+    - path: data/raw/SRV3490.parquet
+      hash: md5
+      md5: dc3537544c57a6500203db714e0e857a
+      size: 268229940
+    - path: src/crashdetect/data.py
+      hash: md5
+      md5: 0ecfc96e70fa21b8905819c5bd355c05
+      size: 4085
+    params:
+      params.yaml:
+        data.n_samples: 4
+    outs:
+    - path: samples
+      hash: md5
+      md5: d178cd497dd9afea0ae4e2864e147b67.dir
+      size: 1112710
+      nfiles: 4
+  train:
+    cmd: python -m crashdetect.train
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 316e3eadc0ab47575c8b63f3b060c63e
+      size: 1835205
+    - path: src/crashdetect/metrics.py
+      hash: md5
+      md5: 695cbeb89431ed4e1fab6fb1a2472dc6
+      size: 676
+    - path: src/crashdetect/train.py
+      hash: md5
+      md5: 8ffeb301310a64538f3bf5f3fa2fffb8
+      size: 3993
+    params:
+      params.yaml:
+        train:
+          model: random_forest
+          n_estimators: 300
+          max_depth: 8
+          cv_folds: 5
+          random_state: 42
+          threshold: 0.5
+    outs:
+    - path: reports/train.json
+      hash: md5
+      md5: 7a688ee566980298ba40a475ae315dd1
+      size: 224
+  evaluate:
+    cmd: python -m crashdetect.evaluate
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: c0f66c1d737da12c9ceea742ef9c6998
+      size: 460564
+    - path: reports/train.json
+      hash: md5
+      md5: 7a688ee566980298ba40a475ae315dd1
+      size: 224
+    - path: src/crashdetect/evaluate.py
+      hash: md5
+      md5: 325cf862163ec912a87440b78e40b18a
+      size: 2069
+    params:
+      params.yaml:
+        gate:
+          min_auc: 0.7
+    outs:
+    - path: reports/eval.json
+      hash: md5
+      md5: f6b7108f9cd252136dbd479bff7c6c17
+      size: 244
+  export:
+    cmd: python -m crashdetect.export_model
+    deps:
+    - path: reports/eval.json
+      hash: md5
+      md5: f6b7108f9cd252136dbd479bff7c6c17
+      size: 244
+    - path: src/crashdetect/export_model.py
+      hash: md5
+      md5: 297a0f46e2a81dffbd96a3dc3a2b0a8e
+      size: 1324
+    outs:
+    - path: model
+      hash: md5
+      md5: c4699d9e14aca160165f785f9cf098a9.dir
+      size: 9774989
+      nfiles: 8

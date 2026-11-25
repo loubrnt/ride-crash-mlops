@@ -1,0 +1,12 @@
+{
+  "model_version": "2",
+  "n_test": 700,
+  "crash_share": 0.2,
+  "test_roc_auc": 0.9905,
+  "test_avg_precision": 0.9535,
+  "test_precision": 0.8831,
+  "test_recall": 0.9714,
+  "test_f1": 0.9252,
+  "gate_min_auc": 0.7,
+  "gate_passed": true
+}
