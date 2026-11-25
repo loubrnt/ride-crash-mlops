@@ -31,12 +31,13 @@ env:
   MLFLOW_DISABLE_AGENT_HINT: "1"
   API_IMAGE: loubrunet/ride-crash-api
   APP_IMAGE: loubrunet/ride-crash-app
-  HAS_DOCKERHUB: ${{ secrets.DOCKERHUB_TOKEN != '' }}
 
 jobs:
   train-deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      HAS_DOCKERHUB: ${{ secrets.DOCKERHUB_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
 
