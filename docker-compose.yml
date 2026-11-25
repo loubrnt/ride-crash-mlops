@@ -1,0 +1,22 @@
+# The whole product, from the images published on Docker Hub:
+#   docker compose up        ->  web app http://localhost:8501, API http://localhost:8000/docs
+# Add --build to rebuild the images locally (needs ./model, see `make export`).
+services:
+  api:
+    image: loubrunet/ride-crash-api:latest
+    build: .
+    ports:
+      - "8000:8000"
+
+  app:
+    image: loubrunet/ride-crash-app:latest
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    environment:
+      API_URL: http://api:8000
+    ports:
+      - "8501:8501"
+    depends_on:
+      api:
+        condition: service_healthy
