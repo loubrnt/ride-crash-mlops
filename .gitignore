@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+mlflow.db
+mlruns/
+mlartifacts/
+/model/
+data/raw/*
+!data/raw/.gitkeep
+data/processed/train.csv
+data/processed/test.csv
+.env
+.DS_Store

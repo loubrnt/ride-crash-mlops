@@ -1,0 +1,49 @@
+[project]
+name = "crashdetect"
+version = "0.1.0"
+description = "MLOps project: detect crashes (falls) in micromobility rides from IMU data"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi>=0.115",
+    "mlflow>=3.1,<4",
+    "numpy>=2.0",
+    "pandas>=2.2,<3",
+    "pyarrow>=17",
+    "pydantic>=2.8",
+    "pyyaml>=6.0",
+    "scikit-learn>=1.5",
+    "uvicorn>=0.30",
+]
+
+[dependency-groups]
+dev = [
+    "dvc>=3.50",
+    "httpx>=0.27",
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+app = [
+    "requests>=2.32",
+    "streamlit>=1.38",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = ["e2e: needs a running API (set API_URL)"]
+filterwarnings = ["ignore::DeprecationWarning", "ignore::FutureWarning"]
