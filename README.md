@@ -2,6 +2,8 @@
 
 Albert School · MSA-DAT09-01 MLOps & Model Deployment · Group 3
 
+Team: Lou Brunet, Alexis Maeder, Cristian Larrain, Colin Pietri, Mathis Meimoun
+
 Detect whether a micromobility ride contains a **crash (fall)** from the recording of its
 motion sensor (IMU: 3-axis accelerometer + 3-axis gyroscope), and ship the model as a product:
 reproducible pipeline, experiment tracking, tested API, web app, Docker images and CI/CD.
