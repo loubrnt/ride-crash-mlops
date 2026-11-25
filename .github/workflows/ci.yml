@@ -1,0 +1,37 @@
+name: CI
+
+# Runs on every push and pull request: lint + unit, integration and API tests.
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MLFLOW_DISABLE_AGENT_HINT: "1"
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      # --locked: fails if uv.lock is out of sync with pyproject.toml
+      - name: Dependencies
+        run: uv sync --locked --all-groups
+
+      - name: Lint
+        run: |
+          uv run --no-sync ruff check src tests app
+          uv run --no-sync ruff format --check src tests app
+
+      - name: Tests
+        run: uv run --no-sync pytest -q

@@ -1,0 +1,96 @@
+name: Train & deploy
+
+# Canonical pipeline on main: data -> training -> evaluation gate -> images -> end-to-end test -> Docker Hub.
+# If the gate or the end-to-end test fails, nothing is published.
+# Manual retraining:  gh workflow run cd.yml -f reason="new data"
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Why this retraining?"
+        default: "manual"
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "app/**"
+      - "data/processed/features.csv"
+      - "params.yaml"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "Dockerfile"
+      - ".github/workflows/cd.yml"
+
+concurrency:
+  group: train-deploy
+  cancel-in-progress: false
+
+env:
+  MLFLOW_TRACKING_URI: sqlite:///mlflow.db
+  MLFLOW_DISABLE_AGENT_HINT: "1"
+  API_IMAGE: loubrunet/ride-crash-api
+  APP_IMAGE: loubrunet/ride-crash-app
+
+jobs:
+  train-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Dependencies (exact versions from uv.lock)
+        run: uv sync --locked --all-groups
+
+      # The raw file (268 MB) is not in git: CI starts from the committed features
+      - name: Split
+        run: uv run --no-sync python -m crashdetect.data split
+
+      - name: Training (tracked in MLflow)
+        run: uv run --no-sync python -m crashdetect.train
+
+      - name: Evaluation gate (ROC AUC on the test set)
+        run: uv run --no-sync python -m crashdetect.evaluate
+
+      - name: Export the promoted model
+        run: uv run --no-sync python -m crashdetect.export_model
+
+      - name: Summary
+        run: |
+          {
+            echo "### Training: ${{ inputs.reason || 'push' }}"
+            echo '```json'; cat reports/train.json reports/eval.json; echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: model
+          path: |
+            model/
+            reports/
+
+      - name: Build images
+        run: |
+          docker build -t "$API_IMAGE:latest" -t "$API_IMAGE:${{ github.sha }}" .
+          docker build -f app/Dockerfile -t "$APP_IMAGE:latest" -t "$APP_IMAGE:${{ github.sha }}" .
+
+      - name: End-to-end test on the API container
+        run: |
+          docker run -d --name api -p 8000:8000 "$API_IMAGE:latest"
+          for i in $(seq 1 30); do curl -fs http://localhost:8000/health && break; sleep 2; done
+          API_URL=http://localhost:8000 uv run --no-sync pytest -q -m e2e
+          docker rm -f api
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push to Docker Hub
+        run: |
+          docker push --all-tags "$API_IMAGE"
+          docker push --all-tags "$APP_IMAGE"
